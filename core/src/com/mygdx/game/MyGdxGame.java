@@ -46,15 +46,12 @@ public class MyGdxGame extends ApplicationAdapter {
 		perspectiveCamera.near = 1f;
 		perspectiveCamera.far = 300f;
 		perspectiveCamera.update();
+//
+//		model = modelBuilder.createBox(5f,5f,5f, new Material(ColorAttribute.createDiffuse(Color.GREEN)),
+//				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
-		model = modelBuilder.createBox(5f,5f,5f, new Material(ColorAttribute.createDiffuse(Color.GREEN)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-
-		for (int i = 0; i < 5; i++) {
-
-		}
-		modelInstance = new ModelInstance(model);
-
+		assetManager.load("data/untitled.g3db",Model.class);
+		assetManager.finishLoading();
 		cameraInputController = new CameraInputController(perspectiveCamera);
 		Gdx.input.setInputProcessor(cameraInputController);
 		loading = true;
@@ -77,12 +74,21 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		modelBatch.dispose();
-		model.dispose();
+		instances.clear();
+		assetManager.dispose();
 	}
 
 	private void doneLoading() {
 		Model square = modelBuilder.createBox(5f,5f,5f, new Material(ColorAttribute.createDiffuse(Color.GREEN)),
 				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+		Model tree = assetManager.get("data/untitled.g3db",Model.class);
+		for (float x = -24f; x <= 24f; x += 6f) {
+			for (float z = -24f; z <= 24f; z += 6f) {
+				ModelInstance squareInstance = new ModelInstance(tree);
+				squareInstance.transform.setToTranslation(x, 0, z);
+				instances.add(squareInstance);
+			}
+		}
 		ModelInstance modelInstance = new ModelInstance(square);
 		instances.add(modelInstance);
 		loading = false;
